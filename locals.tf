@@ -78,37 +78,36 @@ locals {
     "traffic manager profile"           = "tm"
   }
 
+  # For any resources that does not follow the convention <dept code><environment><CSP Region>-<userDefined-string>-suffix
   resource_names_exception = {
-    # For any resources that does not follow the convention <dept code><environment><CSP Region>-<userDefined-string>-suffix
-    "network interface card"            = "${var.name_attributes_ssc.parent_object_name}-${var.user_defined}-nic${var.name_attributes_ssc.instance}"
-    "network security group"            = "${var.name_attributes_ssc.parent_object_name}-${var.user_defined}-nsg"
-    "public ip address"                 = "${var.name_attributes_ssc.parent_object_name}-${var.user_defined}-pip${var.name_attributes_ssc.instance}"
-    "resource group"                    = "${local.common_convention_base_ssc}-${var.name_attributes_ssc.owner}-${var.user_defined}-rg"
-    "route table"                       = "${var.name_attributes_ssc.parent_object_name}-rt"
-    "user-assigned managed identity"    = "${local.common_convention_base_ssc}_${var.user_defined}"
-    "management group"                  = "${local.common_convention_base_ssc}-${var.name_attributes_ssc.owner}-${var.user_defined}"
-    "subscription"                      = "${local.common_convention_base_ssc}-${var.name_attributes_ssc.owner}-${var.user_defined}"
-    "virtual machine os disk"           = "${var.name_attributes_ssc.parent_object_name}-osdisk${var.name_attributes_ssc.instance}"
-    "virtual machine data disk"         = "${var.name_attributes_ssc.parent_object_name}-datadisk${var.name_attributes_ssc.instance}"
-    "availability set"                  = "${var.name_attributes_ssc.parent_object_name}-${var.user_defined}-as"
-    "subnet"                            = "${var.name_attributes_ssc.parent_object_name}-${var.user_defined}-snet"
-    "route"                             = "${var.user_defined}-route"
-    "virtual network gateway"           = "${var.name_attributes_ssc.parent_object_name}-${var.user_defined}-vng"
-    "local network gateway"             = "${var.name_attributes_ssc.parent_object_name}-${var.user_defined}-lng"
-    "connection"                        = "${var.name_attributes_ssc.parent_object_name}-${var.user_defined}-con"
-    "network security group rule"       = "${var.user_defined}"
-    "load balancer front end interface" = "${var.name_attributes_ssc.parent_object_name}-lbr${var.name_attributes_ssc.instance}"
-    "load balancer rules"               = "${var.name_attributes_ssc.parent_object_name}-lbbp"
-    "load balancer backend pool"        = "${var.name_attributes_ssc.parent_object_name}-lbhp"
-    "load balancer health probe"        = "${var.name_attributes_ssc.parent_object_name}-${var.user_defined}-lbhp"
+    "network interface card"            = [for user_item in var.user_defined : "${var.name_attributes_ssc.parent_object_name}-${user_item}-nic${var.name_attributes_ssc.instance}"]
+    "network security group"            = [for user_item in var.user_defined : "${var.name_attributes_ssc.parent_object_name}-${user_item}-nsg"]
+    "public ip address"                 = [for user_item in var.user_defined : "${var.name_attributes_ssc.parent_object_name}-${user_item}-pip${var.name_attributes_ssc.instance}"]
+    "resource group"                    = [for user_item in var.user_defined : "${local.common_convention_base_ssc}-${var.name_attributes_ssc.owner}-${user_item}-rg"]
+    "route table"                       = ["${var.name_attributes_ssc.parent_object_name}-rt"]
+    "user-assigned managed identity"    = [for user_item in var.user_defined : "${local.common_convention_base_ssc}_${user_item}"]
+    "management group"                  = [for user_item in var.user_defined : "${local.common_convention_base_ssc}-${var.name_attributes_ssc.owner}-${user_item}"]
+    "subscription"                      = [for user_item in var.user_defined : "${local.common_convention_base_ssc}-${var.name_attributes_ssc.owner}-${user_item}"]
+    "virtual machine os disk"           = [for user_item in var.user_defined : "${var.name_attributes_ssc.parent_object_name}-osdisk${var.name_attributes_ssc.instance}"]
+    "virtual machine data disk"         = [for user_item in var.user_defined : "${var.name_attributes_ssc.parent_object_name}-datadisk${var.name_attributes_ssc.instance}"]
+    "availability set"                  = [for user_item in var.user_defined : "${var.name_attributes_ssc.parent_object_name}-${user_item}-as"]
+    "subnet"                            = [for user_item in var.user_defined : "${var.name_attributes_ssc.parent_object_name}-${user_item}-snet"]
+    "route"                             = [for user_item in var.user_defined : "${user_item}-route"]
+    "virtual network gateway"           = [for user_item in var.user_defined : "${var.name_attributes_ssc.parent_object_name}-${user_item}-vng"]
+    "local network gateway"             = [for user_item in var.user_defined : "${var.name_attributes_ssc.parent_object_name}-${user_item}-lng"]
+    "connection"                        = [for user_item in var.user_defined : "${var.name_attributes_ssc.parent_object_name}-${user_item}-con"]
+    "network security group rule"       = [for user_item in var.user_defined : "${user_item}"]
+    "load balancer front end interface" = [for user_item in var.user_defined : "${var.name_attributes_ssc.parent_object_name}-lbr${var.name_attributes_ssc.instance}"]
+    "load balancer rules"               = ["${var.name_attributes_ssc.parent_object_name}-lbbp"]
+    "load balancer backend pool"        = ["${var.name_attributes_ssc.parent_object_name}-lbhp"]
+    "load balancer health probe"        = [for user_item in var.user_defined : "${var.name_attributes_ssc.parent_object_name}-${user_item}-lbhp"]
   }
 
   common_conv_prefixes_ssc = {
     for resource_type, abbrev in local.resource_type_abbreviations_ssc :
-    resource_type => (
-      contains(keys(local.resource_names_exception), resource_type)
-      ? local.resource_names_exception[resource_type]
-      : "${local.common_convention_base_ssc}-${var.user_defined}-${abbrev}"
+    resource_type => zipmap(
+      var.user_defined,
+      [for user_defined_string in var.user_defined : "${local.common_convention_base_ssc}-${user_defined_string}-${abbrev}"]
     )
   }
 
@@ -122,6 +121,6 @@ locals {
     }
   )
 
-  common_conv_prefixes = var.government ? local.common_conv_prefixes_ssc : local.common_conv_prefixes_statcan
+  common_conv_prefixes = local.common_conv_prefixes_ssc
 
 }

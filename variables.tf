@@ -3,18 +3,18 @@ variable "name_attributes" {
     project     = string
     environment = string
     location    = string
-    instance    = number
+    instance    = string
   })
 
   default = {
     project     = ""
     environment = ""
     location    = ""
-    instance    = 0
+    instance    = "0"
   }
 
   validation {
-    condition     = (!var.government) || (var.name_attributes.project == "" && var.name_attributes.environment == "" && var.name_attributes.location == "" && var.name_attributes.instance == 0)
+    condition     = (!var.government) || (var.name_attributes.project == "" && var.name_attributes.environment == "" && var.name_attributes.location == "" && var.name_attributes.instance == "0")
     error_message = "The variable 'name_attributes' must not be set if the variable 'government' is set to true."
   }
 
@@ -34,7 +34,7 @@ variable "name_attributes" {
   }
 
   validation {
-    condition     = (var.government || (var.name_attributes.instance >= 0 && var.name_attributes.instance < 100))
+    condition     = (var.government || (tonumber(var.name_attributes.instance) >= 0 && tonumber(var.name_attributes.instance) < 100))
     error_message = "The variable var.name_attributes.instance must be between 0-100."
   }
 }
@@ -44,7 +44,7 @@ variable "name_attributes_ssc" {
     department_code    = string
     csp_region         = string
     environment        = string
-    instance           = number
+    instance           = string
     owner              = string
     parent_object_name = string
   })
@@ -53,7 +53,7 @@ variable "name_attributes_ssc" {
     department_code    = ""
     csp_region         = ""
     environment        = ""
-    instance           = 0
+    instance           = "0"
     owner              = ""
     parent_object_name = "ParentObjName"
   }
@@ -90,7 +90,7 @@ variable "name_attributes_ssc" {
   }
 
   validation {
-    condition     = (!var.government || var.name_attributes_ssc.instance == "" || (var.name_attributes_ssc.instance >= 1 && var.name_attributes_ssc.instance < 100))
+    condition     = (!var.government || var.name_attributes_ssc.instance == "" || (tonumber(var.name_attributes_ssc.instance) >= 1 && tonumber(var.name_attributes_ssc.instance) < 100))
     error_message = "The variable var.name_attributes.instance must be between 1-100."
   }
 
@@ -106,13 +106,13 @@ variable "name_attributes_ssc" {
 }
 
 variable "user_defined" {
-  description = "A user-defined field that describes the Azure resource."
-  type        = string
-  default     = ""
+  description = "A list of user-defined fields that describes the Azure resource."
+  type        = list(string)
+  default     = []
 
   validation {
-    condition     = !var.government || length(var.user_defined) >= 2 && length(var.user_defined) <= 15
-    error_message = "The user-defined field must be between 2-15 characters long."
+    condition     = !var.government || length(var.user_defined) >= 1 && alltrue([for item in var.user_defined : length(item) >= 2 && length(item) <= 15])
+    error_message = "Each user-defined field must be between 2-15 characters long, and the list must contain at least one item."
   }
 }
 
