@@ -48,4 +48,5 @@ This module produces resource names using the common naming convention for vario
 
 | Date       | Release | Change                                          |
 | ---------- | ------- | ----------------------------------------------- |
+| 2025-02-25 | v2.0.0  | Add SSC naming convention                       |
 | 2025-01-25 | v1.0.0  | Initial commit                                  |

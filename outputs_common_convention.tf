@@ -4,7 +4,7 @@
 
 output "prefix" {
   description = "The common prefix for an Azure resource name. Under typical circumstances, the resource type acronym would just be appended to the prefix to complete the resource name."
-  value       = var.government ? local.common_convention_base_ssc : local.common_convention_base_statcan
+  value       = var.government ? local.common_convention_base_ssc : local.common_convention_base_stc
 }
 
 // Scope: subscription
@@ -102,8 +102,8 @@ output "route_table_prefix" {
 // Scope: resource group
 // Length: 2-80
 // Valid Characters:Alphanumerics, underscores, periods, and hyphens. Start with alphanumeric. End with alphanumeric or underscore.
-output "route" {
-  description = "The prefix of a route for a route table"
+output "route_prefix" {
+  description = "The prefix of a route for a route."
   value       = local.common_conv_prefixes["route"]
 }
 
@@ -134,7 +134,7 @@ output "subnet_prefix" {
 // Scope: resource group
 // Length: 1-80
 // Valid Characters: Alphanumeric, hyphen and underscore
-output "bastion_end_point" {
+output "bastion_end_point_prefix" {
   description = "The prefix of an Azure Bastion End-point"
   value       = local.common_conv_prefixes["bastion end-point"]
 }
@@ -142,7 +142,7 @@ output "bastion_end_point" {
 // Scope: resource group
 // Length: 1-80
 // Valid Characters: Alphanumeric, hyphen and underscore
-output "virtual_network_gateway" {
+output "virtual_network_gateway_prefix" {
   description = "The prefix of a virtual network gateway"
   value       = local.common_conv_prefixes["bastion end-point"]
 }
@@ -150,7 +150,7 @@ output "virtual_network_gateway" {
 // Scope: resource group
 // Length: 1-80
 // Valid Characters: Alphanumeric, hyphen and underscore
-output "local_network_gateway" {
+output "local_network_gateway_prefix" {
   description = "The prefix of a virtual network gateway"
   value       = local.common_conv_prefixes["bastion end-point"]
 }
@@ -158,7 +158,7 @@ output "local_network_gateway" {
 // Scope: virtual network
 // Length: 1-80
 // Valid Characters: Alphanumeric, hyphen and underscore
-output "connection" {
+output "connection_prefix" {
   description = "The prefix of a connection for a virtual network"
   value       = local.common_conv_prefixes["connection"]
 }
@@ -166,7 +166,7 @@ output "connection" {
 // Scope: resource group
 // Length: 1-80
 // Valid characters: Alphanumeric, hyphen and underscore
-output "network_security_group_rule" {
+output "network_security_group_rule_prefix" {
   description = "The prefix of a network security group rule."
   value       = local.common_conv_prefixes["network security group rule"]
 }
@@ -174,7 +174,7 @@ output "network_security_group_rule" {
 // Scope: resource group
 // Length: 1-80
 // Valid characters: Alphanumeric, hyphen and underscore
-output "load_balancer_front_end_interface" {
+output "load_balancer_front_end_interface_prefix" {
   description = "The prefix of a load balancer front end interface"
   value       = local.common_conv_prefixes["load balancer front end interface"]
 }
@@ -182,7 +182,7 @@ output "load_balancer_front_end_interface" {
 // Scope: load balancer
 // Length: 1-80
 // Valid characters: Alphanumeric, hyphen and underscore
-output "load_balancer_rules" {
+output "load_balancer_rules_prefix" {
   description = "The prefix of a load balancer rule"
   value       = local.common_conv_prefixes["load balancer rules"]
 }
@@ -190,7 +190,7 @@ output "load_balancer_rules" {
 // Scope: load balancer
 // Length: 1-80
 // Valid characters: Alphanumeric, hyphen and underscore
-output "load_balancer_backend_pool" {
+output "load_balancer_backend_pool_prefix" {
   description = "The prefix of a load balancer backend pool"
   value       = local.common_conv_prefixes["load balancer front end interface"]
 }
@@ -198,7 +198,7 @@ output "load_balancer_backend_pool" {
 // Scope: load balancer
 // Length: 1-80
 // Valid characters: Alphanumeric, hyphen and underscore
-output "load_balancer_health_probe" {
+output "load_balancer_health_probe_prefix" {
   description = "The prefix of a load balancer health probe"
   value       = local.common_conv_prefixes["load balancer front end interface"]
 }
@@ -206,7 +206,7 @@ output "load_balancer_health_probe" {
 // Scope: resource group
 // Length: 1-80
 // Valid Characters: Alphanumeric, hyphen and underscore
-output "azure_application_gateway" {
+output "azure_application_gateway_prefix" {
   description = "The prefix of an azure application gateway"
   value       = local.common_conv_prefixes["azure application gateway"]
 }
@@ -214,7 +214,7 @@ output "azure_application_gateway" {
 // Scope: resource group
 // Length: 1-63
 // Valid Characters: Alphanumeric, hyphen and underscore
-output "traffic_manager_profile" {
+output "traffic_manager_profile_prefix" {
   description = "The prefix of a traffic manager profile"
   value       = local.common_conv_prefixes["traffic manager profile"]
 }
@@ -267,7 +267,7 @@ output "virtual_machine_scale_set_prefix" {
 // Scope: resource group
 // Length: 3-64
 // Valid Characters: Alphanumerics, underscores, and hyphens.
-output "azure_data_bricks_prefix" {
+output "azure_databricks_prefix" {
   description = "The prefix of an azure data brick service"
   value       = local.common_conv_prefixes["databricks service"]
 }

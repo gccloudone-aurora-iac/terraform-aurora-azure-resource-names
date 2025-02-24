@@ -1,44 +1,3 @@
-variable "name_attributes" {
-  type = object({
-    project     = string
-    environment = string
-    location    = string
-    instance    = string
-  })
-
-  default = {
-    project     = ""
-    environment = ""
-    location    = ""
-    instance    = "0"
-  }
-
-  validation {
-    condition     = (!var.government) || (var.name_attributes.project == "" && var.name_attributes.environment == "" && var.name_attributes.location == "" && var.name_attributes.instance == "0")
-    error_message = "The variable 'name_attributes' must not be set if the variable 'government' is set to true."
-  }
-
-  validation {
-    condition     = (var.government || (length(var.name_attributes.environment) > 0 && length(var.name_attributes.environment) <= 10))
-    error_message = "Environment must be between 1-10 characters long"
-  }
-
-  validation {
-    condition     = (var.government || (length(var.name_attributes.project) > 0 && length(var.name_attributes.project) <= 10))
-    error_message = "Project name must be between 1-10 characters long."
-  }
-
-  validation {
-    condition     = (var.government || contains(["canadacentral", "canadaeast"], replace(lower(var.name_attributes.location), " ", "")))
-    error_message = "Location provided is not valid. Valid locations are 'Canada Central', 'Canada East'."
-  }
-
-  validation {
-    condition     = (var.government || (tonumber(var.name_attributes.instance) >= 0 && tonumber(var.name_attributes.instance) < 100))
-    error_message = "The variable var.name_attributes.instance must be between 0-100."
-  }
-}
-
 variable "name_attributes_ssc" {
   type = object({
     department_code    = string
@@ -70,27 +29,22 @@ variable "name_attributes_ssc" {
   EOT
 
   validation {
-    condition     = var.government || (var.name_attributes_ssc.department_code == "" && var.name_attributes_ssc.csp_region == "" && var.name_attributes_ssc.environment == "")
-    error_message = "The variable 'name_attributes_ssc' must not be set if the variable 'government' is set to false."
-  }
-
-  validation {
-    condition     = (!var.government || length(var.name_attributes_ssc.environment) == 1)
+    condition     = length(var.name_attributes_ssc.environment) == 1
     error_message = "Environment must be 1 character long."
   }
 
   validation {
-    condition     = (!var.government || length(var.name_attributes_ssc.department_code) == 2)
+    condition     = length(var.name_attributes_ssc.department_code) == 2
     error_message = "Department code must be 2 characters long."
   }
 
   validation {
-    condition     = (!var.government || length(var.name_attributes_ssc.csp_region) == 1)
+    condition     = length(var.name_attributes_ssc.csp_region) == 1
     error_message = "CSP region must be 1 character long."
   }
 
   validation {
-    condition     = (!var.government || var.name_attributes_ssc.instance == "" || (tonumber(var.name_attributes_ssc.instance) >= 1 && tonumber(var.name_attributes_ssc.instance) < 100))
+    condition     = var.name_attributes_ssc.instance == "" || (tonumber(var.name_attributes_ssc.instance) >= 0 && tonumber(var.name_attributes_ssc.instance) < 100)
     error_message = "The variable var.name_attributes.instance must be between 1-100."
   }
 
@@ -111,7 +65,7 @@ variable "user_defined" {
   default     = []
 
   validation {
-    condition     = !var.government || length(var.user_defined) >= 1 && alltrue([for item in var.user_defined : length(item) >= 2 && length(item) <= 15])
+    condition     = length(var.user_defined) >= 1 && alltrue([for item in var.user_defined : length(item) >= 2 && length(item) <= 15])
     error_message = "Each user-defined field must be between 2-15 characters long, and the list must contain at least one item."
   }
 }
