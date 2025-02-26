@@ -3,13 +3,13 @@ module "azure_resource_prefixes_stc" {
 
   government = false
 
-  name_attributes_ssc = {
-    department_code    = "St"
-    environment        = "D"
-    csp_region         = "c"
-    instance           = "00"
-    owner              = "ABC"
-    parent_object_name = ""
+  name_attributes = {
+    department_code     = "St"
+    environment         = "D"
+    csp_region          = "c"
+    instance            = "00"
+    owner               = "ABC"
+    parent_object_names = []
   }
   user_defined = ["aur"]
 }
@@ -23,16 +23,16 @@ module "azure_resource_prefixes_ssc" {
 
   government = true
 
-  name_attributes_ssc = {
-    department_code    = "Sc"
-    environment        = "P"
-    csp_region         = "c"
-    instance           = "1"
-    owner              = "ABC"
-    parent_object_name = "ScPcCNR-CORE"
+  name_attributes = {
+    department_code     = "Sc"
+    environment         = "P"
+    csp_region          = "c"
+    instance            = 1
+    owner               = "ABC"
+    parent_object_names = ["ScPcCNR-VDC-MRZ"]
   }
 
-  user_defined = ["CORE", "EX2"]
+  user_defined = ["CORE", "EX2", "Logging"]
 
 }
 
@@ -40,6 +40,10 @@ output "azure_resource_prefixes_values_ssc" {
   value = module.azure_resource_prefixes_ssc
 }
 
-output "des_name_CORE_ssc" {
+output "des_name_ssc" {
   value = module.azure_resource_prefixes_ssc.disk_encryption_set_prefix["CORE"]
+}
+
+output "snet_name_ssc" {
+  value = module.azure_resource_prefixes_ssc.subnet_prefix["CORE"]["Logging"]
 }

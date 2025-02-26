@@ -4,7 +4,7 @@
 
 output "prefix" {
   description = "The common prefix for an Azure resource name. Under typical circumstances, the resource type acronym would just be appended to the prefix to complete the resource name."
-  value       = var.government ? local.common_convention_base_ssc : local.common_convention_base_stc
+  value       = var.government ? local.common_conv_base_ssc : local.common_conv_base_stc
 }
 
 // Scope: subscription
@@ -184,7 +184,7 @@ output "load_balancer_front_end_interface_prefix" {
 // Valid characters: Alphanumeric, hyphen and underscore
 output "load_balancer_rules_prefix" {
   description = "The prefix of a load balancer rule"
-  value       = local.common_conv_prefixes["load balancer rules"]
+  value       = local.common_conv_prefixes["load balancer rule"]
 }
 
 // Scope: load balancer
@@ -295,8 +295,6 @@ output "availability_set_prefix" {
   description = "The prefix of an availability set"
   value       = local.common_conv_prefixes["availability set"]
 }
-
-
 
 ################
 ### Identity ###
