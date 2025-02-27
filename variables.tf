@@ -12,7 +12,7 @@ variable "name_attributes" {
     department_code     = ""
     csp_region          = ""
     environment         = ""
-    instance            = "0"
+    instance            = ""
     owner               = ""
     parent_object_names = []
   }
