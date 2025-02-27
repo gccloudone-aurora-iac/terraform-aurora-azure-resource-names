@@ -29,7 +29,7 @@ module "azure_resource_prefixes_ssc" {
     csp_region          = "c"
     instance            = 1
     owner               = "ABC"
-    parent_object_names = ["ScPcCNR-VDC-MRZ"]
+    parent_object_names = ["ScDcCNR-VDC-MRZ"]
   }
 
   user_defined = ["CORE", "EX2", "Logging"]
@@ -46,4 +46,8 @@ output "des_name_ssc" {
 
 output "snet_name_ssc" {
   value = module.azure_resource_prefixes_ssc.subnet_prefix["CORE"]["Logging"]
+}
+
+output "snet_name_specific_parent_ssc" {
+  value = module.azure_resource_prefixes_ssc.subnet_prefix["ScDcCNR-VDC-MRZ"]["Logging"]
 }
