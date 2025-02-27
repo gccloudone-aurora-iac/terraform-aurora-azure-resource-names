@@ -20,7 +20,7 @@ variable "name_attributes" {
   description = <<EOT
     name_attributes = {
       department_code : "Two character code that uniquely identifies departments across the GC. REQUIRED."
-      csp_region : "Single character code that identifies Cloud Service Provider and Region. REQUIRED."
+      csp_region : "Single character code that identifies Clouser_defined_string Service Provider and Region. REQUIRED."
       environment : "Single character code that identifies environment. REQUIRED."
       instance : "The instance number of the object. Optional."
       owner : "The name of the resource owner. Optional."

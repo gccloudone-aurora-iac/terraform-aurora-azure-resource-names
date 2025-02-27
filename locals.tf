@@ -84,28 +84,13 @@ locals {
     for resource_type, suffix in local.resource_type_suffixes_ssc :
     resource_type => {
       for user_defined_string in var.user_defined :
-      user_defined_string => abbrev == "" ?
+      user_defined_string => suffix == "" ?
       "${local.common_conv_base_ssc}-${user_defined_string}" :
       "${local.common_conv_base_ssc}-${user_defined_string}-${suffix}"
     }
   }
 
-  resource_prefixes_exception = {
-    for resource_type, name_list in {
-      "resource group"                    = [for user_defined_string in var.user_defined : "${local.common_conv_base_ssc}-${var.name_attributes.owner}-${user_defined_string}-rg"]
-      "route"                             = [for user_defined_string in var.user_defined : "${user_defined_string}-route"]
-      "route table"                       = [for user_defined_string in var.user_defined : "${local.common_conv_base_ssc}-${user_defined_string}-rt"]
-      "user-assigned managed identity"    = [for user_defined_string in var.user_defined : "${local.common_conv_base_ssc}_${user_defined_string}"]
-      "management group"                  = [for user_defined_string in var.user_defined : "${local.common_conv_base_ssc}-${var.name_attributes.owner}-${user_defined_string}"]
-      "subscription"                      = [for user_defined_string in var.user_defined : "${local.common_conv_base_ssc}-${var.name_attributes.owner}-${user_defined_string}"]
-      "load balancer rules"               = [for user_defined_string in var.user_defined : "${local.common_conv_base_ssc}-${user_defined_string}-lbr${var.name_attributes.instance}"]
-      "load balancer backend pool"        = [for user_defined_string in var.user_defined : "${local.common_conv_base_ssc}-${user_defined_string}-lbbp"]
-      "load balancer front end interface" = [for user_defined_string in var.user_defined : "${local.common_conv_base_ssc}-${user_defined_string}-lbbp"]
-      "network security group rule"       = [for user_defined_string in var.user_defined : "${user_defined_string}"]
-    } :
-    resource_type => zipmap(var.user_defined, name_list)
-  }
-
+  # List of resources that require the name of the parent object & user_defined string in its name
   resource_types_children = [
     "network interface card",
     "network security group",
@@ -122,13 +107,46 @@ locals {
 
   resource_prefixes_children = {
     for resource_type in local.resource_types_children : resource_type => {
-      for user_defined_outer in var.user_defined : user_defined_outer => {
+      for user_defined_outer in concat(var.user_defined, var.name_attributes.parent_object_names) : user_defined_outer => {
         for user_defined_inner in var.user_defined : user_defined_inner => (
-          "${local.common_conv_base_ssc}-${user_defined_outer}-${user_defined_inner}-${lookup(local.resource_type_suffixes_ssc, resource_type, "")}"
+          # If iterating over the parent_object_names, we can ignore the common_conv_base_ssc since the parent name should include that.
+          contains(var.name_attributes.parent_object_names, user_defined_outer) ?
+            "${user_defined_outer}-${user_defined_inner}-${lookup(local.resource_type_suffixes_ssc, resource_type, "")}" :
+            "${local.common_conv_base_ssc}-${user_defined_outer}-${user_defined_inner}-${lookup(local.resource_type_suffixes_ssc, resource_type, "")}"
         )
       }
     }
   }
+
+  # Any resources that are exceptions to both of the two above naming convention patterns
+  resource_prefixes_exception = merge(
+    {
+      "resource group"                 = { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}-${var.name_attributes.owner}-${user_defined_string}-rg" }
+      "route"                          = { for user_defined_string in var.user_defined : user_defined_string => "${user_defined_string}-route" }
+      "user-assigned managed identity" = { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}_${user_defined_string}" }
+      "management group"               = { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}-${var.name_attributes.owner}-${user_defined_string}" }
+      "subscription"                   = { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}-${var.name_attributes.owner}-${user_defined_string}" }
+      "network security group rule"    = { for user_defined_string in var.user_defined : user_defined_string => "${user_defined_string}" }
+    },
+    {
+      "route table" = merge(
+        { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}-${user_defined_string}-rt" },
+        { for parent in var.name_attributes.parent_object_names : parent => "${parent}-rt" }
+      )
+      "load balancer rules" = merge(
+        { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}-${user_defined_string}-lbr${var.name_attributes.instance}" },
+        { for parent in var.name_attributes.parent_object_names : parent => "${parent}-lbr${var.name_attributes.instance}" }
+      )
+      "load balancer backend pool" = merge(
+        { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}-${user_defined_string}-lbbp" },
+        { for parent in var.name_attributes.parent_object_names : parent => "${parent}-lbbp" }
+      )
+      "load balancer front end interface" = merge(
+        { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}-${user_defined_string}-lbr" },
+        { for parent in var.name_attributes.parent_object_names : parent => "${parent}-lbr" }
+      )
+    }
+  )
 
   common_conv_prefixes_ssc = merge(
     local.common_conv_prefixes_ssc_standard,
