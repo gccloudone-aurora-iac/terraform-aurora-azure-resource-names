@@ -9,8 +9,9 @@ module "azure_resource_names_stc" {
     csp_region      = "c"
     instance        = "00"
     owner           = "ABC"
+    project         = "aur"
   }
-  user_defined = ["aur"]
+  user_defined = []
 }
 
 output "azure_resource_names_values_stc" {

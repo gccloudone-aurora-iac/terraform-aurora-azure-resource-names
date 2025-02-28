@@ -9,6 +9,7 @@ module "azure_resource_names_ssc" {
     csp_region      = "c"
     instance        = "1"
     owner           = "ABC"
+    project         = "aur"
   }
 
   parent_object_names = ["ScDcCNR-VDC-MRZ"]

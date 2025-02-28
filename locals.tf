@@ -17,7 +17,7 @@ locals {
     "U" = "uat"
   }
 
-  common_conv_base_stc = "${var.user_defined[0]}-${local.environment_table[upper(var.name_attributes.environment)]}-${local.location_table[lower(var.name_attributes.csp_region)]}-${local.instance}"
+  common_conv_base_stc = "${var.name_attributes.project}-${local.environment_table[upper(var.name_attributes.environment)]}-${local.location_table[lower(var.name_attributes.csp_region)]}-${local.instance}"
   common_conv_base_ssc = "${var.name_attributes.department_code}${var.name_attributes.environment}${var.name_attributes.csp_region}"
   resource_type_suffixes_stc = {
     "application security group"     = "asg"

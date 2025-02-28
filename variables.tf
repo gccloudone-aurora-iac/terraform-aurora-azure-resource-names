@@ -5,6 +5,7 @@ variable "name_attributes" {
     environment     = string
     instance        = string
     owner           = string
+    project         = string
   })
 
   default = {
@@ -13,6 +14,7 @@ variable "name_attributes" {
     environment     = ""
     instance        = ""
     owner           = ""
+    project         = ""
   }
 
   description = <<EOT
@@ -20,8 +22,9 @@ variable "name_attributes" {
       department_code : "Two character code that uniquely identifies departments across the GC. REQUIRED."
       csp_region : "Single character code that identifies Clouser_defined_string Service Provider and Region. REQUIRED."
       environment : "Single character code that identifies environment. REQUIRED."
-      instance : "The instance number of the object. Optional."
-      owner : "The name of the resource owner. Optional."
+      instance : "The instance number of the object. OPTIONAL."
+      owner : "The name of the resource owner. OPTIONAL."
+      project" "The name of the project. REQUIRED if using STC naming convention. Otherwise OPTIONAL."
     }
   EOT
 
@@ -49,6 +52,11 @@ variable "name_attributes" {
     condition     = (var.name_attributes.owner == "" || length(var.name_attributes.owner) >= 3 && length(var.name_attributes.owner) <= 4)
     error_message = "The variable owner must be between 3-4 characters."
   }
+
+  validation {
+    condition     = var.government == "ssc" || (var.government == "stc" && length(var.name_attributes.project) > 0 && length(var.name_attributes.project) <= 10)
+    error_message = "The project field must be between 1-10 characters long."
+  }
 }
 
 variable "user_defined" {
@@ -57,8 +65,8 @@ variable "user_defined" {
   default     = []
 
   validation {
-    condition     = length(var.user_defined) >= 1 && alltrue([for user_defined_string in var.user_defined : length(user_defined_string) >= 2 && length(user_defined_string) <= 15])
-    error_message = "Each user-defined field must be between 2-15 characters long, and the list must contain at least one user defined string."
+    condition     = var.government == "stc" || (var.government == "ssc" && length(var.user_defined) >= 1 && alltrue([for user_defined_string in var.user_defined : length(user_defined_string) >= 2 && length(user_defined_string) <= 15]))
+    error_message = "Each user-defined field must be between 2-15 characters long. REQUIRED if using SSC naming convention. Otherwise OPTIONAL"
   }
 }
 
