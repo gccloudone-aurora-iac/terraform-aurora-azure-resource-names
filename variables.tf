@@ -1,20 +1,18 @@
 variable "name_attributes" {
   type = object({
-    department_code     = string
-    csp_region          = string
-    environment         = string
-    instance            = string
-    owner               = string
-    parent_object_names = list(string)
+    department_code = string
+    csp_region      = string
+    environment     = string
+    instance        = string
+    owner           = string
   })
 
   default = {
-    department_code     = ""
-    csp_region          = ""
-    environment         = ""
-    instance            = ""
-    owner               = ""
-    parent_object_names = []
+    department_code = ""
+    csp_region      = ""
+    environment     = ""
+    instance        = ""
+    owner           = ""
   }
 
   description = <<EOT
@@ -24,7 +22,6 @@ variable "name_attributes" {
       environment : "Single character code that identifies environment. REQUIRED."
       instance : "The instance number of the object. Optional."
       owner : "The name of the resource owner. Optional."
-      parent_object_names : "The names of the parent objects without the suffix (if applicable). Ex: GcPcCNR-CORE. Optional."
     }
   EOT
 
@@ -52,11 +49,6 @@ variable "name_attributes" {
     condition     = (var.name_attributes.owner == "" || length(var.name_attributes.owner) >= 3 && length(var.name_attributes.owner) <= 4)
     error_message = "The variable owner must be between 3-4 characters."
   }
-
-  validation {
-    condition     = (var.name_attributes.parent_object_names == [] || length(var.name_attributes.parent_object_names) >= 0 && alltrue([for name in var.name_attributes.parent_object_names : length(name) >= 2 && length(name) <= 15]))
-    error_message = "The variable parent_object_names must be between 2-30 characters."
-  }
 }
 
 variable "user_defined" {
@@ -70,8 +62,23 @@ variable "user_defined" {
   }
 }
 
+variable "parent_object_names" {
+  description = "The names of the parent objects without the suffix (if applicable). Ex: GcPcCNR-CORE. You should define this variable if the parent object name is not determined from this module. Optional."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = (var.parent_object_names == [] || length(var.parent_object_names) >= 0 && alltrue([for name in var.parent_object_names : length(name) >= 2 && length(name) <= 15]))
+    error_message = "Each parent_object_name must be between 2-30 characters."
+  }
+}
+
 variable "government" {
-  type        = bool
-  default     = false
-  description = "Sets which naming convention to use. If true, use SSC's otherwise use STC's."
+  type        = string
+  default     = "stc"
+  description = "Sets which naming convention to use. Accepted values: stc, ssc"
+  validation {
+    condition     = var.government == "ssc" || var.government == "stc"
+    error_message = "The accepted values for the government variable are: stc, ssc."
+  }
 }

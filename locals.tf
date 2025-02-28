@@ -12,11 +12,13 @@ locals {
     "P" = "prod",
     "D" = "dev",
     "T" = "test",
+    "S" = "sandbox",
+    "Q" = "qa",
+    "U" = "uat"
   }
 
   common_conv_base_stc = "${var.user_defined[0]}-${local.environment_table[upper(var.name_attributes.environment)]}-${local.location_table[lower(var.name_attributes.csp_region)]}-${local.instance}"
   common_conv_base_ssc = "${var.name_attributes.department_code}${var.name_attributes.environment}${var.name_attributes.csp_region}"
-
   resource_type_suffixes_stc = {
     "application security group"     = "asg"
     "disk encryption set"            = "des"
@@ -38,6 +40,26 @@ locals {
     "virtual network"                = "vnet"
   }
 
+
+  common_conv_names_stc_standard = {
+    for resource_type, abbrev in local.resource_type_suffixes_stc :
+    resource_type => {
+      stc = "${local.common_conv_base_stc}-${abbrev}"
+    }
+  }
+
+  common_conv_names_stc = merge(
+    local.common_conv_names_ssc,
+    local.common_conv_names_stc_standard,
+    {
+      for resource_type in local.resource_types_children :
+      resource_type => {
+        stc = {
+          stc = "${local.common_conv_base_stc}-${lookup(local.resource_type_suffixes_stc, resource_type, "")}"
+        }
+      }
+    }
+  )
   resource_type_suffixes_ssc = {
     "application security group"        = "asg"
     "disk encryption set"               = "des"
@@ -80,7 +102,7 @@ locals {
   }
 
   # Follows the standard naming pattern of <dept code><environment><CSP Region>-<userDefined-string>-suffix
-  common_conv_prefixes_ssc_standard = {
+  common_conv_names_ssc_standard = {
     for resource_type, suffix in local.resource_type_suffixes_ssc :
     resource_type => {
       for user_defined_string in var.user_defined :
@@ -105,21 +127,21 @@ locals {
     "load balancer health probe"
   ]
 
-  resource_prefixes_children = {
+  resource_names_children = {
     for resource_type in local.resource_types_children : resource_type => {
-      for user_defined_outer in concat(var.user_defined, var.name_attributes.parent_object_names) : user_defined_outer => {
+      for user_defined_outer in concat(var.user_defined, var.parent_object_names) : user_defined_outer => {
         for user_defined_inner in var.user_defined : user_defined_inner => (
           # If iterating over the parent_object_names, we can ignore the common_conv_base_ssc since the parent name should include that.
-          contains(var.name_attributes.parent_object_names, user_defined_outer) ?
-            "${user_defined_outer}-${user_defined_inner}-${lookup(local.resource_type_suffixes_ssc, resource_type, "")}" :
-            "${local.common_conv_base_ssc}-${user_defined_outer}-${user_defined_inner}-${lookup(local.resource_type_suffixes_ssc, resource_type, "")}"
+          contains(var.parent_object_names, user_defined_outer) ?
+          "${user_defined_outer}-${user_defined_inner}-${lookup(local.resource_type_suffixes_ssc, resource_type, "")}" :
+          "${local.common_conv_base_ssc}-${user_defined_outer}-${user_defined_inner}-${lookup(local.resource_type_suffixes_ssc, resource_type, "")}"
         )
       }
     }
   }
 
   # Any resources that are exceptions to both of the two above naming convention patterns
-  resource_prefixes_exception = merge(
+  resource_names_exception = merge(
     {
       "resource group"                 = { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}-${var.name_attributes.owner}-${user_defined_string}-rg" }
       "route"                          = { for user_defined_string in var.user_defined : user_defined_string => "${user_defined_string}-route" }
@@ -131,47 +153,29 @@ locals {
     {
       "route table" = merge(
         { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}-${user_defined_string}-rt" },
-        { for parent in var.name_attributes.parent_object_names : parent => "${parent}-rt" }
+        { for parent in var.parent_object_names : parent => "${parent}-rt" }
       )
       "load balancer rules" = merge(
         { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}-${user_defined_string}-lbr${var.name_attributes.instance}" },
-        { for parent in var.name_attributes.parent_object_names : parent => "${parent}-lbr${var.name_attributes.instance}" }
+        { for parent in var.parent_object_names : parent => "${parent}-lbr${var.name_attributes.instance}" }
       )
       "load balancer backend pool" = merge(
         { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}-${user_defined_string}-lbbp" },
-        { for parent in var.name_attributes.parent_object_names : parent => "${parent}-lbbp" }
+        { for parent in var.parent_object_names : parent => "${parent}-lbbp" }
       )
       "load balancer front end interface" = merge(
         { for user_defined_string in var.user_defined : user_defined_string => "${local.common_conv_base_ssc}-${user_defined_string}-lbr" },
-        { for parent in var.name_attributes.parent_object_names : parent => "${parent}-lbr" }
+        { for parent in var.parent_object_names : parent => "${parent}-lbr" }
       )
     }
   )
 
-  common_conv_prefixes_ssc = merge(
-    local.common_conv_prefixes_ssc_standard,
-    local.resource_prefixes_exception,
-    local.resource_prefixes_children
+  common_conv_names_ssc = merge(
+    local.common_conv_names_ssc_standard,
+    local.resource_names_exception,
+    local.resource_names_children
   )
 
-  # Force STC prefixes to have the same structure as SSC's
-  common_conv_prefixes_stc = merge(
-    local.common_conv_prefixes_ssc,
-    {
-      for resource_type, abbrev in local.resource_type_suffixes_stc :
-      resource_type => {
-        stc = "${local.common_conv_base_stc}-${abbrev}"
-      }
-    },
-    {
-      for resource_type in local.resource_types_children :
-      resource_type => {
-        stc = {
-          stc = "${local.common_conv_base_stc}-${lookup(local.resource_type_suffixes_stc, resource_type, "")}"
-        }
-      }
-    }
-  )
-
-  common_conv_prefixes = var.government ? local.common_conv_prefixes_ssc : local.common_conv_prefixes_stc
+  # Force STC names to have the same structure as SSC's
+  common_conv_names = var.government == "ssc" ? local.common_conv_names_ssc : local.common_conv_names_stc
 }
