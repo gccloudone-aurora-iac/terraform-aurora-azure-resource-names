@@ -1,4 +1,8 @@
 locals {
+  ##############################
+  #   STC NAMING CONVENTION    #
+  ##############################
+
   # The following variables are used to create the standardized naming convention for the resources.
   instance = format("%02s", var.name_attributes.instance)
 
@@ -18,7 +22,7 @@ locals {
   }
 
   common_conv_base_stc = "${var.name_attributes.project}-${local.environment_table[upper(var.name_attributes.environment)]}-${local.location_table[lower(var.name_attributes.csp_region)]}-${local.instance}"
-  common_conv_base_ssc = "${var.name_attributes.department_code}${var.name_attributes.environment}${var.name_attributes.csp_region}"
+
   resource_type_suffixes_stc = {
     "application security group"     = "asg"
     "disk encryption set"            = "des"
@@ -40,7 +44,6 @@ locals {
     "virtual network"                = "vnet"
   }
 
-
   common_conv_names_stc_standard = {
     for resource_type, abbrev in local.resource_type_suffixes_stc :
     resource_type => {
@@ -48,6 +51,7 @@ locals {
     }
   }
 
+  # Force STC names to have the same structure as SSC's
   common_conv_names_stc = merge(
     local.common_conv_names_ssc,
     local.common_conv_names_stc_standard,
@@ -60,6 +64,10 @@ locals {
       }
     }
   )
+
+  ##############################
+  #   SSC NAMING CONVENTION    #
+  ##############################
   resource_type_suffixes_ssc = {
     "application security group"        = "asg"
     "disk encryption set"               = "des"
@@ -101,16 +109,7 @@ locals {
     "traffic manager profile"           = "tm"
   }
 
-  # Follows the standard naming pattern of <dept code><environment><CSP Region>-<userDefined-string>-suffix
-  common_conv_names_ssc_standard = {
-    for resource_type, suffix in local.resource_type_suffixes_ssc :
-    resource_type => {
-      for user_defined_string in var.user_defined :
-      user_defined_string => suffix == "" ?
-      "${local.common_conv_base_ssc}-${user_defined_string}" :
-      "${local.common_conv_base_ssc}-${user_defined_string}-${suffix}"
-    }
-  }
+  common_conv_base_ssc = "${var.name_attributes.department_code}${var.name_attributes.environment}${var.name_attributes.csp_region}"
 
   # List of resources that require the name of the parent object & user_defined string in its name
   resource_types_children = [
@@ -170,12 +169,27 @@ locals {
     }
   )
 
+  # Follows the standard naming pattern of <dept code><environment><CSP Region>-<userDefined-string>-suffix
+  common_conv_names_ssc_standard = {
+    for resource_type, suffix in local.resource_type_suffixes_ssc :
+    resource_type => {
+      for user_defined_string in var.user_defined :
+      user_defined_string => suffix == "" ?
+      "${local.common_conv_base_ssc}-${user_defined_string}" :
+      "${local.common_conv_base_ssc}-${user_defined_string}-${suffix}"
+    }
+  }
+
   common_conv_names_ssc = merge(
     local.common_conv_names_ssc_standard,
     local.resource_names_exception,
     local.resource_names_children
   )
 
-  # Force STC names to have the same structure as SSC's
+
+################################
+#   COMMON CONVENTION NAMES    #
+################################
+
   common_conv_names = var.government == "ssc" ? local.common_conv_names_ssc : local.common_conv_names_stc
 }
