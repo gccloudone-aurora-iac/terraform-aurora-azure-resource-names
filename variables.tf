@@ -54,7 +54,7 @@ variable "name_attributes" {
   }
 
   validation {
-    condition     = var.government == "ssc" || (var.government == "stc" && length(var.name_attributes.project) > 0 && length(var.name_attributes.project) <= 10)
+    condition     = length(var.name_attributes.project) > 0 && length(var.name_attributes.project) <= 10
     error_message = "The project field must be between 1-10 characters long."
   }
 }
@@ -65,7 +65,7 @@ variable "user_defined" {
   default     = []
 
   validation {
-    condition     = var.government == "stc" || (var.government == "ssc" && length(var.user_defined) >= 1 && alltrue([for user_defined_string in var.user_defined : length(user_defined_string) >= 2 && length(user_defined_string) <= 15]))
+    condition     = var.naming_convention == "stc" || (var.naming_convention == "ssc" && length(var.user_defined) >= 1 && alltrue([for user_defined_string in var.user_defined : length(user_defined_string) >= 2 && length(user_defined_string) <= 15]))
     error_message = "Each user-defined field must be between 2-15 characters long. REQUIRED if using SSC naming convention. Otherwise OPTIONAL"
   }
 }
@@ -81,12 +81,12 @@ variable "parent_object_names" {
   }
 }
 
-variable "government" {
+variable "naming_convention" {
   type        = string
   default     = "stc"
   description = "Sets which naming convention to use. Accepted values: stc, ssc"
   validation {
-    condition     = var.government == "ssc" || var.government == "stc"
+    condition     = var.naming_convention == "ssc" || var.naming_convention == "stc"
     error_message = "The accepted values for the government variable are: stc, ssc."
   }
 }

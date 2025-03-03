@@ -1,7 +1,7 @@
 module "azure_resource_names_stc" {
   source = "../"
 
-  government = "stc"
+  naming_convention = "stc"
 
   name_attributes = {
     department_code = "St"

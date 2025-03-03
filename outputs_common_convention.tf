@@ -4,7 +4,7 @@
 
 output "name" {
   description = "The common name for an Azure resource name. Under typical circumstances, the resource type acronym would just be appended to the name to complete the resource name."
-  value       = var.government == "ssc" ? local.common_conv_base_ssc : local.common_conv_base_stc
+  value       = var.naming_convention == "ssc" ? local.common_conv_base_ssc : local.common_conv_base_stc
 }
 
 // Scope: subscription

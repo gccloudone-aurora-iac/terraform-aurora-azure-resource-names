@@ -1,7 +1,7 @@
 module "azure_resource_names_ssc" {
   source = "../"
 
-  government = "ssc"
+  naming_convention = "ssc"
 
   name_attributes = {
     department_code = "Sc"
@@ -9,12 +9,12 @@ module "azure_resource_names_ssc" {
     csp_region      = "c"
     instance        = "1"
     owner           = "ABC"
-    project         = "aur"
+    project         = "gen"
   }
 
   parent_object_names = ["ScDcCNR-VDC-MRZ"]
 
-  user_defined = ["CORE", "EX2", "Logging"]
+  user_defined = ["CORE", "EX2", "Logging", "network-00"]
 
 }
 
