@@ -24,7 +24,7 @@ variable "name_attributes" {
       environment : "Single character code that identifies environment. REQUIRED."
       instance : "The instance number of the object. OPTIONAL."
       owner : "The name of the resource owner. OPTIONAL."
-      project" "The name of the project. REQUIRED if using STC naming convention. Otherwise OPTIONAL."
+      project" "The name of the project. REQUIRED"
     }
   EOT
 
