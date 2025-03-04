@@ -87,6 +87,6 @@ variable "naming_convention" {
   description = "Sets which naming convention to use. Accepted values: stc, ssc"
   validation {
     condition     = var.naming_convention == "ssc" || var.naming_convention == "stc"
-    error_message = "The accepted values for the government variable are: stc, ssc."
+    error_message = "The naming_convention field must either be 'ssc' or 'stc'."
   }
 }
