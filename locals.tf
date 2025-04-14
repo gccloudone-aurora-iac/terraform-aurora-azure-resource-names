@@ -1,37 +1,18 @@
-locals {
-  # The following variables are used to create the standardized naming convention for the resources.
-  location = lookup(local.location_table, replace(lower(var.name_attributes.location), " ", ""))
-  instance = format("%02s", var.name_attributes.instance)
+resource "random_id" "this" {
+  byte_length = 8
+}
 
-  common_convention_base = "${var.name_attributes.project}-${var.name_attributes.environment}-${local.location}-${local.instance}"
+resource "random_string" "random" {
+  length  = 5
+  special = false
+  upper   = false
+  numeric = false
 }
 
 locals {
-  location_table = {
-    "canadacentral" = "cc"
-    "canadaeast"    = "ce"
-  }
+  random_number = substr(random_id.this.dec, 0, 6)
 
-  resource_type_abbreviations = {
-    "application security group"     = "asg"
-    "disk encryption set"            = "des"
-    "firewall"                       = "fw"
-    "kubernetes service"             = "aks"
-    "load balancer"                  = "lb"
-    "network interface card"         = "nic"
-    "network security group"         = "nsg"
-    "private endpoint"               = "pe"
-    "public ip address"              = "pip"
-    "resource group"                 = "rg"
-    "route server"                   = "rs"
-    "route table"                    = "rt"
-    "service endpoint policy"        = "sep"
-    "service principal"              = "sp"
-    "user-assigned managed identity" = "msi"
-    "virtual machine"                = "vm"
-    "virtual machine scale set"      = "vmss"
-    "virtual network"                = "vnet"
-  }
+  instance = format("%02s", var.name_attributes.instance)
 
-  common_conv_prefixes = { for resource_type, abbrev in local.resource_type_abbreviations : resource_type => "${local.common_convention_base}-${abbrev}" }
+  resource_names = var.naming_convention == "oss" ? local.resource_names_oss : local.resource_names_gc
 }
