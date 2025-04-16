@@ -2,6 +2,11 @@
 ## General ##
 #############
 
+output "name" {
+  description = "The common prefix for an Azure resource name. Under typical circumstances, the resource type acronym would just be appended to complete the resource name."
+  value       = var.naming_convention == "oss" ? local.common_convention_base_oss : local.common_convention_base_gc
+}
+
 // Scope: subscription
 // Length: 1-90
 // Valid Characters: Underscores, hyphens, periods, parentheses, and letters or digits. Can't end with a period.
@@ -76,6 +81,14 @@ output "private_endpoint_name" {
 output "public_ip_address_name" {
   description = "The name of a Public IP Address in Azure."
   value       = local.resource_names["public ip address"]
+}
+
+// Scope: resource group
+// Length: 1-80
+// Valid Characters: Alphanumerics, underscores, periods, and hyphens. Start with alphanumeric. End alphanumeric or underscore.
+output "route_server_public_ip_address_name" {
+  description = "The name of a Public IP Address in Azure."
+  value       = local.resource_names["route server public ip address"]
 }
 
 // Scope: resource group

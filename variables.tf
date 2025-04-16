@@ -23,7 +23,7 @@ variable "name_attributes" {
       owner : "The name of the resource owner. OPTIONAL."
       project" "The name of the project. REQUIRED"
       environment : "Single character code that identifies environment. REQUIRED."
-      location : "Single character code that identifies Clouser_defined_string Service Provider and Region. REQUIRED."
+      location : "Single character code that identifies Cloud Service Provider and Region. REQUIRED."
       instance : "The instance number of the object. OPTIONAL."
     }
   EOT

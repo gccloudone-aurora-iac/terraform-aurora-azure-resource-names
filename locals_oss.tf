@@ -3,7 +3,18 @@
 ##############################
 
 locals {
-  common_convention_base_oss = "${var.name_attributes.project}-${var.name_attributes.environment}-${var.name_attributes.location}-${local.instance}"
+  location_table_oss = {
+    "cc"            = "cc"
+    "ce"            = "ce"
+    "canadacentral" = "cc"
+    "canadaeast"    = "ce"
+  }
+}
+
+locals {
+  location_oss = lookup(local.location_table_oss, replace(lower(var.name_attributes.location), " ", ""))
+
+  common_convention_base_oss = "${var.name_attributes.project}-${var.name_attributes.environment}-${local.location_oss}-${local.instance}"
 
   resource_type_abbreviations_oss = {
     "application security group"        = "asg"
@@ -46,7 +57,9 @@ locals {
     "traffic manager profile"           = "tm"
   }
 
-  resource_type_abbreviations_oss_custom = {}
+  resource_type_abbreviations_oss_custom = {
+    "route server public ip address" = "${local.common_convention_base_oss}-pip"
+  }
 
   resource_names_oss = merge(
     {

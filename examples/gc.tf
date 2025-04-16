@@ -9,7 +9,7 @@ module "azure_resource_names_gc" {
     owner           = "ABC"
     project         = "gen"
     environment     = "P"
-    location        = "c"
+    location        = "cc"
     instance        = "1"
   }
 }
