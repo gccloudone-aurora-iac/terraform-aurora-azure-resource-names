@@ -58,7 +58,11 @@ locals {
   }
 
   resource_type_abbreviations_oss_custom = {
-    "route server public ip address" = "${local.common_convention_base_oss}-pip"
+    "public ip address route server"    = "${local.common_convention_base_oss}-pip"
+    "resource group kubernetes service" = "${local.common_convention_base_oss}-rg-managed-aks"
+    "resource group backup"             = "${local.common_convention_base_oss}-rg-backup"
+    "resource group platform"           = "${local.common_convention_base_oss}-rg-platform"
+    "resource group secrets"            = "${local.common_convention_base_oss}-rg-secrets"
   }
 
   resource_names_oss = merge(

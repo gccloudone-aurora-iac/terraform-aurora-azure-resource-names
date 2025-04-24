@@ -15,6 +15,38 @@ output "resource_group_name" {
   value       = local.resource_names["resource group"]
 }
 
+// Scope: subscription
+// Length: 1-90
+// Valid Characters: Underscores, hyphens, periods, parentheses, and letters or digits. Can't end with a period.
+output "resource_group_kubernetes_service_name" {
+  description = "The name of an Azure Resource Group for the Kubernetes Service."
+  value       = local.resource_names["resource group kubernetes service"]
+}
+
+// Scope: subscription
+// Length: 1-90
+// Valid Characters: Underscores, hyphens, periods, parentheses, and letters or digits. Can't end with a period.
+output "resource_group_backup_name" {
+  description = "The name of an Azure Resource Group for Backups."
+  value       = local.resource_names["resource group backups"]
+}
+
+// Scope: subscription
+// Length: 1-90
+// Valid Characters: Underscores, hyphens, periods, parentheses, and letters or digits. Can't end with a period.
+output "resource_group_platform_name" {
+  description = "The name of an Azure Resource Group for Platform."
+  value       = local.resource_names["resource group platform"]
+}
+
+// Scope: subscription
+// Length: 1-90
+// Valid Characters: Underscores, hyphens, periods, parentheses, and letters or digits. Can't end with a period.
+output "resource_group_secrets_name" {
+  description = "The name of an Azure Resource Group for Secrets."
+  value       = local.resource_names["resource group secrets"]
+}
+
 // Scope: tenant
 // Length: 1-90
 // Valid Characters: Alphanumeric, underscore, hyphen, spaces
@@ -86,9 +118,9 @@ output "public_ip_address_name" {
 // Scope: resource group
 // Length: 1-80
 // Valid Characters: Alphanumerics, underscores, periods, and hyphens. Start with alphanumeric. End alphanumeric or underscore.
-output "route_server_public_ip_address_name" {
+output "public_ip_address_route_server_name" {
   description = "The name of a Public IP Address in Azure."
-  value       = local.resource_names["route server public ip address"]
+  value       = local.resource_names["public ip address route server"]
 }
 
 // Scope: resource group

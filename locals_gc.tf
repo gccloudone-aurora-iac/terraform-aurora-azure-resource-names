@@ -58,7 +58,11 @@ locals {
   }
 
   resource_type_abbreviations_gc_custom = {
-    "route server public ip address" = "${local.common_convention_base_gc}-${var.name_attributes.project}-${var.user_defined}-rs-pip${var.name_attributes.instance}"
+    "public ip address route server"    = "${local.common_convention_base_gc}-${var.name_attributes.project}-${var.user_defined}-rs-pip${var.name_attributes.instance}"
+    "resource group kubernetes service" = "${local.common_convention_base_gc}-${var.name_attributes.project}-${var.user_defined}-aks-managed-rg"
+    "resource group backup"             = "${local.common_convention_base_gc}-${var.name_attributes.project}-${var.user_defined}-backup-rg"
+    "resource group platform"           = "${local.common_convention_base_gc}-${var.name_attributes.project}-${var.user_defined}-platform-rg"
+    "resource group secrets"            = "${local.common_convention_base_gc}-${var.name_attributes.project}-${var.user_defined}-secrets-rg"
   }
 
   resource_names_gc = merge(
