@@ -47,6 +47,14 @@ output "resource_group_secrets_name" {
   value       = local.resource_names["resource group secrets"]
 }
 
+// Scope: subscription
+// Length: 1-90
+// Valid Characters: Underscores, hyphens, periods, parentheses, and letters or digits. Can't end with a period.
+output "key_vault_secret_name" {
+  description = "The name of an Secret in Azure Key Vault."
+  value       = local.resource_names["key vault secret"]
+}
+
 // Scope: tenant
 // Length: 1-90
 // Valid Characters: Alphanumeric, underscore, hyphen, spaces
