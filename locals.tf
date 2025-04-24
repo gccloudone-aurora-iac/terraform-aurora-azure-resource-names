@@ -10,7 +10,7 @@ resource "random_string" "random" {
 }
 
 locals {
-  random_number = substr(random_id.this.dec, 0, 6)
+  random_number = substr(random_id.this.dec, 0, 5)
 
   instance = format("%02s", var.name_attributes.instance)
 
