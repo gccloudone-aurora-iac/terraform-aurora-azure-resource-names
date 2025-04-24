@@ -28,7 +28,7 @@ output "resource_group_kubernetes_service_name" {
 // Valid Characters: Underscores, hyphens, periods, parentheses, and letters or digits. Can't end with a period.
 output "resource_group_backup_name" {
   description = "The name of an Azure Resource Group for Backups."
-  value       = local.resource_names["resource group backups"]
+  value       = local.resource_names["resource group backup"]
 }
 
 // Scope: subscription
