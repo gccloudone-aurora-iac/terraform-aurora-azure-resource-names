@@ -58,6 +58,7 @@ locals {
   }
 
   resource_type_abbreviations_oss_custom = {
+    "active directory group"            = "${local.common_convention_base_gc}-adg"
     "key vault secret"                  = "${lower(local.common_convention_base_oss)}-kvs"
     "public ip address route server"    = "${local.common_convention_base_oss}-pip"
     "resource group kubernetes service" = "${local.common_convention_base_oss}-rg-managed-aks"

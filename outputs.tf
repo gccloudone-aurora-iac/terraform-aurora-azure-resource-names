@@ -71,6 +71,14 @@ output "subscription_name" {
   value       = local.resource_names["subscription"]
 }
 
+// Scope: resource group
+// Length: 1-80
+// Valid Characters: Alphanumerics, underscores, periods, and hyphens. Start with alphanumeric. End alphanumeric or underscore.
+output "active_directory_group_name" {
+  description = "The name of an Azure Active Directory Group."
+  value       = local.resource_names["active directory group"]
+}
+
 ###############
 ### Network ###
 ###############

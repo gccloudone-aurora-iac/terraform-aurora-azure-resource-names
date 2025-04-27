@@ -58,6 +58,7 @@ locals {
   }
 
   resource_type_abbreviations_gc_custom = {
+    "active directory group"            = "${local.common_convention_base_gc}-${var.name_attributes.project}-${var.user_defined}"
     "key vault secret"                  = "${lower(local.common_convention_base_gc)}-${lower(var.name_attributes.project)}-${lower(var.user_defined)}-kvs"
     "public ip address route server"    = "${local.common_convention_base_gc}-${var.name_attributes.project}-${var.user_defined}-rs-pip${var.name_attributes.instance}"
     "resource group kubernetes service" = "${local.common_convention_base_gc}-${var.name_attributes.project}-${var.user_defined}-aks-managed-rg"
